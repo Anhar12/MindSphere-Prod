@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign In - MindSphere</title>
+    <link rel="icon" type="image/x-icon" href="static/images/Logo.ico">
+
+    {% load django_bootstrap5 %}
+    {% bootstrap_css %}
+    {% bootstrap_javascript %}
+
+    {% load static %}
+
+    <link rel="stylesheet" href="{% static 'css/custom.css' %}">
+    <link href='https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;600;700&display=swap' rel='stylesheet'>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <style>
+        .login {
+            min-height: 100vh;
+            width: 100%;
+            /* background-image: url(../image/background-blur.jpg); */
+            background-color: #66aeac;
+            background-position: center;
+            background-size: cover;
+            position: relative;
+        }
+
+        .login-container {
+            background-color: #036168;
+            border-radius: 10px;
+            box-shadow: #00000059 0px 5px 15px;
+            width: 768px;
+            min-height: 500px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .login-overlay {
+            position: absolute;
+            top: 0;
+            right: 50%;
+            width: 50%;
+            height: 100%;
+        }
+
+        .overlay-logo {
+            background-color: #036168;
+            border-start-start-radius: 10px;
+            border-end-start-radius: 10px;
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+        }
+
+        .overlay-content {
+            max-width: 100%;
+            height: auto;
+            margin: 0 auto;
+            padding: 10px;
+            position: relative;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+
+        .login-form {
+            background-color: #FFF;
+            border-start-end-radius: 10px;
+            border-end-end-radius: 10px;
+            position: absolute;
+            top: 50%;
+            transform: translate(0, -50%);
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            justify-content: center;
+        }
+
+        @media screen and (max-width: 784px) {
+            .login-container {
+                width: 90%;
+
+            }
+
+            .login-overlay {
+                display: none;
+            }
+
+            .login-form {
+                left: 0;
+                width: 100%;
+                border-radius: 10px;
+            }
+
+            .login-form-content {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <section class="login">
+        <div class='login-container'>
+            <div class="login-overlay">
+                <div class="overlay-logo">
+                    <div class="overlay-content">
+                        <p><img src="static/images/LogoLight.png" alt="Logo MindSphere" width="200px"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="login-form">
+                <div class="d-flex justify-content-center gap-2 align-items-center">
+                    <!-- <img src="static/images/LogoPrimary.png" width="60px" alt=""> -->
+                    <h2 class="text-center mb-0 mt-2 fw-bold" style="color: #036168;">Welcome Back!</h2>
+                </div>
+                <p class="text-center fst-italic text-secondary mb-4" style="font-size: small;">Sign in to access your psychological reports</p>
+                <form id="form-signin" method="POST" autocomplete="off" action=""
+                    class="d-flex flex-column align-items-center gap-2 mt-2">
+                    {% csrf_token %}
+                    <div class="text-danger d-none text-end w-100 fs-smaller ps-1 mb-1" id="error-message"></div>
+
+                    <div class="form-group w-100">
+                        <input type="text" class="form-control pe-5 fs-small" id="username" name="username" required
+                            placeholder=" " maxlength="150" />
+                        <label for="username" class="form-label fs-small bg-white px-1">Username</label>
+                        <label for="username" class="position-absolute top-50 translate-middle" style="right: 3px"><i
+                                class="text-primary fas fa-user"></i></label>
+                    </div>
+
+                    <div class="form-group w-100 mt-2">
+                        <input type="password" class="form-control pe-5 password-input fs-small" id="password"
+                            name="password" required placeholder=" " maxlength="150" />
+                        <label for="password" class="form-label fs-small bg-white px-1">Password</label>
+                        <label for="password" class="position-absolute top-50 translate-middle" style="right: 0px"><i
+                                id="toggle-password" class="text-primary fas fa-eye"></i></label>
+                    </div>
+
+                    <div class="w-100 d-flex justify-content-end">
+                        <span id="forgot-password" style="cursor: pointer;" href="" class="fs-small fw-semibold text-decoration-none text-primary">Forgot Password</span>
+                    </div>
+
+                    <div class="w-100 row mt-2">
+                        <div class="col-6 ps-0 pe-1">
+                            <a href="{% url 'home' %}" class="btn btn-secondary w-100 fs-small fw-bold">Back</a>
+                        </div>
+                        <div class="col-6 ps-1 pe-0">
+                            <button type="submit" class="btn btn-primary w-100 fs-small fw-bold">Sign In</button>
+                        </div>
+                    </div>
+
+                </form>
+
+                <div class="d-flex justify-content-center gap-1 mt-3">
+                    <p class="text-center text-secondary my-auto fs-small">Don't have an account yet? </p>
+                    <a href="{% url 'sign-up' %}"
+                        class="btn border-0 p-0 fw-bold text-primary btn-portal my-auto fs-small">Sign Up</a>
+                </div>
+            </div>
+        </div>
+    </section>
+    {% include 'loading-spinner.html' %}
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    {% if messages %}
+    {% for message in messages %}
+    <script>
+        Swal.fire({
+            icon: 'error',
+            title: 'Access Denied',
+            text: '{{ message }}',
+            confirmButtonText: 'Ok',
+            confirmButtonColor: '#DC3545',
+        });
+    </script>
+    {% endfor %}
+    {% endif %}
+    <script>
+        $(document).ready(function () {
+            function SuccessPopUp(message) {
+                Swal.fire({
+                    icon: 'success',
+                    title: 'Successfully!',
+                    text: message,
+                    confirmButtonText: 'Ok',
+                    confirmButtonColor: '#036168',
+                }).then(() => {
+                    window.location.href = '{% url "test-schedule" %}';
+                });
+            }
+
+            function ErrorPopUp(message) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Failed!',
+                    text: message,
+                    confirmButtonText: 'Ok',
+                    confirmButtonColor: '#dc3545',
+                });
+            }
+
+            function onLoading() {
+                $('#loading').removeClass('d-none');
+                $('.overlay').removeClass('d-none');
+            }
+
+            function onLoaded() {
+                $('#loading').addClass('d-none');
+                $('.overlay').addClass('d-none');
+            }
+
+            function resetInput() {
+                const inputs = $('.form-group input');
+
+                inputs.each(function () {
+                    $(this).val('');
+                });
+            }
+            resetInput();
+
+            const passwordInput = $('#password');
+            const toggleIcon = $('#toggle-password');
+            toggleIcon.on('click', function () {
+                if (passwordInput.attr('type') === 'password') {
+                    passwordInput.attr('type', 'text');
+                    toggleIcon.removeClass('fa-eye').addClass('fa-eye-slash');
+                } else {
+                    passwordInput.attr('type', 'password');
+                    toggleIcon.removeClass('fa-eye-slash').addClass('fa-eye');
+                }
+            });
+
+            $('#form-signin').on('submit', function (event) {
+                event.preventDefault();
+                onLoading();
+                $('#error-message').addClass('d-none');
+
+                const formData = new FormData(this);
+
+                $.ajax({
+                    url: '{% url "sign-in" %}',
+                    type: 'POST',
+                    data: formData,
+                    processData: false,
+                    contentType: false,
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    success: function (response) {
+                        onLoaded();
+                        if (response.status === 'success') {
+                            SuccessPopUp(response.message);
+                        } else {
+                            ErrorPopUp(response.message);
+                            $('#error-message').text('*'+response.message).removeClass('d-none');
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        onLoaded();
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Failed!',
+                            text: 'An unexpected error occurred. Please try again.',
+                            confirmButtonText: 'Ok',
+                            confirmButtonColor: '#dc3545',
+                        }).then(() => {
+                            location.reload();
+                        });
+                    }
+                });
+            });
+
+            $("#forgot-password").on("click", function () {
+                Swal.fire({
+                    title: 'Enter your registered email',
+                    input: 'email',
+                    inputLabel: 'Email address',
+                    inputPlaceholder: 'Enter your email',
+                    showCancelButton: true,
+                    confirmButtonText: 'Send Reset Link',
+                    confirmButtonColor: '#036168',
+                    cancelButtonText: 'Cancel',
+                    showLoaderOnConfirm: true,
+                    preConfirm: (email) => {
+                        return $.ajax({
+                            url: "{% url 'forgot-password' %}",
+                            type: "POST",
+                            data: {
+                                email: email,
+                                csrfmiddlewaretoken: "{{ csrf_token }}",
+                            },
+                            success: function (response) {
+                                if (response.status === 'success' ) {
+                                    Swal.fire({
+                                        icon: 'success',
+                                        title: 'Successfully!',
+                                        text: response.message,
+                                        confirmButtonText: 'Ok',
+                                        confirmButtonColor: '#036168',
+                                    });
+                                } else {
+                                    ErrorPopUp(response.message);
+                                }
+                            },
+                            error: function (xhr) {
+                                ErrorPopUp(xhr.responseJSON.message);
+                            },
+                        });
+                    }
+                });
+            });
+
+        });
+    </script>
+</body>
+
+</html>

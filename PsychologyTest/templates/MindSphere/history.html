@@ -1,0 +1,209 @@
+{% extends "MindSphere/base.html" %}
+
+{% block title %}
+History - Mindsphere
+{% endblock %}
+
+{% block content %}
+<section class="w-100 px-4" style="margin-top: 30px;">
+    <h2 class="fw-bold text-center mb-4">Your Psychological <span class="text-primary">Test History</span></h2>
+
+    {% if result_json %}
+        <div id="myGrid" class="ag-theme-quartz d-none my-4" style="height: 67vh; width: 100%;"></div>
+        <div id="loading-spinner" class="d-flex justify-content-center align-items-center" style="height: 100%;">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+        </div>
+    {% else %}
+        <div class="alert alert-warning text-center w-100 my-4">
+            No psychological test history found.
+        </div>
+    {% endif %}
+</section>
+
+{% include 'loading-spinner.html' %}
+
+<script>
+    $(document).ready(function () {
+        function onLoading() {
+            $('#loading').removeClass('d-none');
+            $('.overlay').removeClass('d-none');
+        }
+
+        function onLoaded() {
+            $('#loading').addClass('d-none');
+            $('.overlay').addClass('d-none');
+        }
+
+        function SuccessPopUp(message){
+            Swal.fire({
+                icon: 'success',
+                title: 'Successfully!',
+                text: message,
+                confirmButtonText: 'Ok',
+                confirmButtonColor: '#157347',
+            });
+        }
+
+        function ErrorPopUp(message){
+            Swal.fire({
+                icon: 'error',
+                title: 'Failed!',
+                text: message,
+                confirmButtonText: 'Ok',
+                confirmButtonColor: '#dc3545',
+            });
+        }
+
+        const regisData = {{ result_json|safe }};
+
+        function formatDate(params) {
+            const date = new Date(params.value);
+            const options = {
+                weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', hour: 'numeric', minute: 'numeric'
+            };
+            return date.toLocaleDateString('en-GB', options);
+        }
+
+        const formattedData = regisData.map(item => ({
+            id: item.id,
+            number: item.number,
+            name: item.name,
+            schedule_name: item.schedule_name,
+            psychologist: item.psychologist,
+            summary: item.summary,
+            recommendation: item.recommendation,
+            date: item.date,
+            status: item.status,
+        }));
+
+        function downloadCertificate(params) {
+            if (params.data.status === 'Completed') {
+                const downloadUrl = `{% url 'generate-certificate' 0 %}`.replace('0', params.data.id);
+                return `<button class="btn btn-primary btn-sm btn-print" data-url="${downloadUrl}">Download Certificate</button>`;
+            } else {
+                return `Not Completed`;
+            }
+        }
+
+        const gridOptions = {
+            columnDefs: [
+                {
+                    headerName: 'Certificates',
+                    field: 'actions',
+                    cellRenderer: downloadCertificate,
+                    flex: 1,
+                    minWidth: 200,
+                    maxWidth: 200
+                },
+                {
+                    headerName: 'Certificate Number',
+                    field: 'number',
+                    flex: 1,
+                    minWidth: 250
+                },
+                {
+                    headerName: 'Participant',
+                    field: 'name',
+                    flex: 1,
+                    minWidth: 250
+                },
+                {
+                    headerName: 'Psychological Test',
+                    field: 'schedule_name',
+                    flex: 1,
+                    minWidth: 300
+                },
+                {
+                    headerName: 'Psychologist',
+                    field: 'psychologist',
+                    flex: 1,
+                    minWidth: 250
+                },
+                {
+                    headerName: 'Summary of Result',
+                    field: 'summary',
+                    flex: 1,
+                    minWidth: 400
+                },
+                {
+                    headerName: 'Recommendation of Result',
+                    field: 'recommendation',
+                    flex: 1,
+                    minWidth: 500
+                },
+                {
+                    headerName: 'Date',
+                    field: 'date',
+                    flex: 1,
+                    minWidth: 320,
+                    valueFormatter: formatDate
+                },
+                {
+                    headerName: 'Status',
+                    field: 'status',
+                    flex: 1,
+                    minWidth: 180
+                }
+            ],
+            defaultColDef: {
+                sortable: true,
+                suppressMovable: true,
+                filter: true
+            },
+            rowSelection: 'multiple',
+            suppressRowClickSelection: true,
+            rowData: formattedData,
+            pagination: true,
+            paginationPageSize: 20,
+            getRowId: function (params) {
+                return params.data.id;
+            },
+        };
+
+        const eGridDiv = document.querySelector('#myGrid');
+        new agGrid.Grid(eGridDiv, gridOptions);
+
+        $('#loading-spinner').addClass('d-none');
+        $('#myGrid').removeClass('d-none');
+
+        $(document).on('click', '.btn-print', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            onLoading();
+        
+            const url = $(this).data('url');
+        
+            $.ajax({
+                url: url,
+                method: 'GET',
+                xhrFields: {
+                    responseType: 'blob'
+                },
+                success: function (data, status, xhr) {
+                    onLoaded();
+                    // const blob = new Blob([data], { type: 'application/pdf' });
+                    // const url = window.URL.createObjectURL(blob);
+                    // window.open(url, '_blank'); // Membuka PDF di tab baru untuk preview
+                    const contentDisposition = xhr.getResponseHeader('Content-Disposition');
+                    const fileName = contentDisposition ? contentDisposition.split('filename=')[1].replace(/"/g, '') : 'Certificate.pdf';
+                    const blob = new Blob([data], { type: 'application/pdf' });
+                    const link = document.createElement('a');
+                    link.href = window.URL.createObjectURL(blob);
+                    link.download = fileName;
+                    link.click();
+                    SuccessPopUp('Certificate downloaded successfully!');
+                },
+                error: function (xhr, status, error) {
+                    onLoaded();
+                    console.error('Error:', error);
+                    ErrorPopUp('Failed to download certificate.');
+                }
+            });
+        });
+        
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,192 @@
+{% extends "MindSphere/base.html" %}
+
+{% block title %}
+Psychologist - Mindsphere
+{% endblock %}
+
+{% block content %}
+    <section class="w-100 p-4 row align-items-center justify-content-center">
+        <div class="border rounded shadow container p-5 col-md-6 col-12">
+            <h2 class="fw-bold text-center mb-4" style="color: #036168;">Create Psychologist Account</h2>
+            <form id="form-signup" method="POST" autocomplete="off" class="d-flex flex-column align-items-center gap-2 mt-2">
+                {% csrf_token %}
+                
+                <!-- Username Field -->
+                <div class="w-100">
+                    <div class="text-danger d-none text-end w-100 fs-smaller ps-1 mb-1" id="username_error"></div>
+                    <div class="form-group w-100 position-relative">
+                        <input type="text" class="form-control pe-5 fs-small" id="username" name="username" required placeholder=" " maxlength="150" value="{{ form.username.value|default_if_none:'' }}"/>
+                        <label for="username" class="form-label fs-small bg-white px-1">Username</label>
+                        <label for="username" class="position-absolute top-50 translate-middle" style="right: 3px"><i class="text-primary fas fa-user"></i></label>
+                    </div>
+                </div>
+
+                <div class="w-100 mt-2">
+                    <div class="text-danger d-none text-end w-100 fs-smaller ps-1 mb-1" id="email_error"></div>
+                    <div class="form-group w-100 position-relative">
+                        <input type="email" class="form-control pe-5 fs-small" id="email" name="email" required placeholder=" " maxlength="150" value="{{ form.email.value|default_if_none:'' }}"/>
+                        <label for="email" class="form-label fs-small bg-white px-1">Email</label>
+                        <label for="email" class="position-absolute top-50 translate-middle" style="right: 1px"><i class="text-primary fas fa-envelope"></i></label>
+                    </div>
+                </div>
+            
+                <!-- First Name Field -->
+                <div class="w-100 mt-2">
+                    <div class="text-danger d-none text-end w-100 fs-smaller ps-1 mb-1" id="first_name_error"></div>
+                    <div class="form-group w-100 position-relative">
+                        <input type="text" class="form-control pe-5 fs-small" id="first_name" name="first_name" required placeholder=" " maxlength="150" value="{{ form.first_name.value|default_if_none:'' }}"/>
+                        <label for="first_name" class="form-label fs-small bg-white px-1">First Name</label>
+                        <label for="first_name" class="position-absolute top-50 translate-middle" style="right: 3px"><i class="text-primary fas fa-user"></i></label>
+                    </div>
+                </div>
+            
+                <!-- Last Name Field -->
+                <div class="w-100 mt-2">
+                    <div class="text-danger d-none text-end w-100 fs-smaller ps-1 mb-1" id="last_name_error"></div>
+                    <div class="form-group w-100 position-relative">
+                        <input type="text" class="form-control pe-5 fs-small" id="last_name" name="last_name" required placeholder=" " maxlength="150" value="{{ form.last_name.value|default_if_none:'' }}"/>
+                        <label for="last_name" class="form-label fs-small bg-white px-1">Last Name</label>
+                        <label for="last_name" class="position-absolute top-50 translate-middle" style="right: 3px"><i class="text-primary fas fa-user"></i></label>
+                    </div>
+                </div>
+            
+                <!-- Password Field -->
+                <div class="w-100 mt-2">
+                    <div class="text-danger d-none text-end w-100 fs-smaller ps-1 mb-1" id="password_error"></div>
+                    <div class="form-group w-100 position-relative">
+                        <input type="password" class="form-control pe-5 fs-small" id="password" name="password" required placeholder=" " maxlength="150"/>
+                        <label for="password" class="form-label fs-small bg-white px-1">Password</label>
+                        <label for="password" class="position-absolute top-50 translate-middle" style="right: 0px"><i id="toggle-password" class="text-primary fas fa-eye"></i></label>
+                    </div>
+                </div>
+            
+                <!-- Confirm Password Field -->
+                <div class="w-100 mt-2">
+                    <div class="text-danger d-none text-end w-100 fs-smaller ps-1 mb-1" id="confirm_password_error"></div>
+                    <div class="form-group w-100 position-relative">
+                        <input type="password" class="form-control pe-5 fs-small" id="confirm_password" name="confirm_password" required placeholder=" " maxlength="150"/>
+                        <label for="confirm_password" class="form-label fs-small bg-white px-1">Confirm Password</label>
+                        <label for="confirm_password" class="position-absolute top-50 translate-middle" style="right: 0px"><i id="toggle-confirm-password" class="text-primary fas fa-eye"></i></label>
+                    </div>
+                </div>
+            
+                <button type="submit" class="btn btn-primary w-100 mx-auto fs-small fw-bold mt-4">Create Account</button>
+            </form>
+        </div>
+    </section>
+
+    {% include 'loading-spinner.html' %}
+     
+    <script>
+        function SuccessPopUp(message){
+            Swal.fire({
+                icon: 'success',
+                title: 'Successfully!',
+                text: message,
+                confirmButtonText: 'Ok',
+                confirmButtonColor: '#0EA5E9',
+            }).then(() => {
+                location.reload();
+            });
+        }
+
+        function ErrorPopUp(message){
+            Swal.fire({
+                icon: 'error',
+                title: 'Failed!',
+                text: message,
+                confirmButtonText: 'Ok',
+                confirmButtonColor: '#dc3545',
+            });
+        }
+        
+        function onLoading() {
+            $('#loading').removeClass('d-none');
+            $('.overlay').removeClass('d-none');
+        }
+
+        function onLoaded() {
+            $('#loading').addClass('d-none');
+            $('.overlay').addClass('d-none');
+        }
+
+        function resetInput() {
+            const inputs = $('.form-group input');
+        
+            inputs.each(function() {
+                $(this).val('');
+            });
+        }
+        resetInput();
+
+        function resetError() {
+            const errors = $('.text-danger');
+            errors.each(function() {
+                if (!$(this).hasClass('d-none')) {
+                    $(this).addClass('d-none');
+                }
+            });
+        }
+        resetError();     
+    
+        const passwordInput = $('#password');
+        const passwordInput2 = $('#confirm_password');
+        const toggleIcon = $('#toggle-password');
+        const toggleIcon2 = $('#toggle-confirm-password');
+        toggleIcon.on('click', function() {
+            if (passwordInput.attr('type') === 'password') {
+                passwordInput.attr('type', 'text');
+                toggleIcon.removeClass('fa-eye').addClass('fa-eye-slash');
+            } else {
+                passwordInput.attr('type', 'password');
+                toggleIcon.removeClass('fa-eye-slash').addClass('fa-eye');
+            }
+        });
+        toggleIcon2.on('click', function() {
+            if (passwordInput2.attr('type') === 'password') {
+                passwordInput2.attr('type', 'text');
+                toggleIcon2.removeClass('fa-eye').addClass('fa-eye-slash');
+            } else {
+                passwordInput2.attr('type', 'password');
+                toggleIcon2.removeClass('fa-eye-slash').addClass('fa-eye');
+            }
+        });
+
+        $('#form-signup').on('submit', function(event) {
+            event.preventDefault();
+            resetError();
+            onLoading();
+            
+            const formData = new FormData(this);
+        
+            $.ajax({
+                url: '{% url "psychologist" %}',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    onLoaded();
+                    if (response.status === 'success') {
+                        SuccessPopUp(response.message);
+                    } else {
+                        ErrorPopUp(response.message);
+                        if (response.errors) {
+                            for (const field in response.errors) {
+                                const errorField = $('#'+field+'_error');
+                                errorField.removeClass('d-none').text('*'+response.errors[field]);
+                            }
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    onLoaded();
+                    ErrorPopUp('An unexpected error occurred. Please try again.');
+                }
+            });
+        });         
+    </script>
+{% endblock %}

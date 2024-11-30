@@ -1,0 +1,233 @@
+{% extends "base.html" %}
+
+{% block title %}
+Schedule List - MindSphere
+{% endblock %}
+
+{% block content %}
+<section class="w-100 px-4 container" style="margin-top: 100px;">
+    <h1 class="fw-bold text-center mb-4">List Of <span class="text-primary">Psychological Test</span></h1>
+
+    <div class="d-flex flex-column w-100 gap-3 my-4">
+        <form id="form-search" method="GET" autocomplete="off" action="{% url 'schedule-list' %}" class="d-flex align-items-center w-100 gap-2">
+            <div class="form-group flex-grow-1 position-relative">
+                <input type="search" class="form-control fs-small pe-4" id="search" name="q"
+                    placeholder="Search Schedule" maxlength="150" value="{{ query|default:'' }}">
+            </div>
+            <button type="submit" class="btn btn-primary fs-small fw-bold">
+                <i class="fa-solid fa-magnifying-glass"></i>
+            </button>
+        </form>
+    </div>
+    
+
+    {% if test_schedules %}
+    <div class="d-flex flex-wrap justify-content-center gap-4">
+        {% for test_schedule in test_schedules %}
+        <div class="card shadow-btn border border-primary" style="width: 19rem; cursor: pointer;"
+            data-id="{{ test_schedule.id }}" data-name="{{ test_schedule.Name }}"
+            data-psychologist="{{ test_schedule.Psychologist.id }}"
+            data-psychologist-name="{{ test_schedule.Psychologist.first_name }} {{ test_schedule.Psychologist.last_name }}"
+            data-description="{{ test_schedule.Description }}" data-date="{{ test_schedule.Date|date:'Y-m-d\TH:i' }}"
+            data-date-human="{{ test_schedule.Date|date:'d, M Y H:i' }}" data-capacity="{{ test_schedule.Capacity }}"
+            data-count="{{ test_schedule.registered_count }}" data-location="{{ test_schedule.Location }}"
+            data-image="{{ test_schedule.Image.url }}">
+
+            <img src="{{ test_schedule.Image.url }}" class="card-img-top" style="height: 200px; object-fit: cover;"
+                alt="{{ test_schedule.Name }}">
+
+            <div class="mt-1 mx-3 border-bottom">
+                <h5 class="fw-semibold text-truncate-2 mt-2 overflow-hidden" style="height: 45px; font-size: 18px;">
+                    {{ test_schedule.Name }}
+                </h5>
+                <div class="row">
+                    <p class="mb-1 col-8 text-truncate-1" style="font-size: 14px;">
+                        <span class="fw-semibold mb-2">By <span class="text-primary">{{test_schedule.Psychologist.first_name }} {{ test_schedule.Psychologist.last_name}}</span></span>
+                    </p>
+                    <p class="mb-1 col-4 text-end" style="font-size: 14px;">
+                        {{ test_schedule.registered_count }}/{{ test_schedule.Capacity }}
+                    </p>
+                </div>
+                <p class="text-secondary text-truncate-3 text-justify overflow-hidden"
+                    style="height: 61px; font-size: 14px;">
+                    {{ test_schedule.Description }}
+                </p>
+            </div>
+            <div class="my-2 mx-3 row justify-content-between align-items-center overflow-hidden" style="height: 35px;">
+                <div class="col-6 p-0">
+                    <p class="m-0 text-secondary" style="font-size: 14px;">
+                        {{ test_schedule.Date|date:"d, M Y H:i" }}
+                    </p>
+                </div>
+                
+                <div class="justify-content-end d-flex w-50 gap-1 p-0">
+                    <div class="text-end">
+                        {% if test_schedule.truncated_date >= tomorrow and test_schedule.registered_count < test_schedule.Capacity %}
+                            <button class="btn btn-success btn-sm btn-regis">Register</button>
+                        {% else %}
+                            <button class="btn btn-danger btn-sm btn-notavailable">Not Available</button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <style>
+        .pagination .page-link {
+            color: #036168 !important; /* Warna teks tombol tidak aktif */
+            border-color: #036168; /* Warna border tombol tidak aktif */
+        }
+
+        .pagination .page-link:hover {
+            background-color: #036168; /* Warna latar belakang saat hover */
+            color: #ffffff !important; /* Warna teks saat hover */
+        }
+
+        .pagination .page-item.disabled .page-link {
+            color: #a0a0a0; /* Warna teks tombol tidak aktif dan disabled */
+            pointer-events: none; /* Nonaktifkan klik untuk tombol disabled */
+            background-color: transparent; /* Pastikan tombol disabled transparan */
+            border-color: #036168; /* Warna border tombol disabled */
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #036168; /* Warna background tombol aktif */
+            color: #ffffff !important; /* Warna teks tombol aktif */
+            border-color: #036168; /* Warna border tombol aktif */
+        }
+
+    </style>
+
+    <div class="w-100 d-flex justify-content-center mt-4">
+        <nav aria-label="Page navigation">
+            <ul class="pagination">
+                {% if test_schedules.has_previous %}
+                <li class="page-item"><a class="page-link"
+                        href="?page={{ test_schedules.previous_page_number }}">&laquo;</a></li>
+                {% endif %}
+
+                {% for num in test_schedules.paginator.page_range %}
+                {% if num == test_schedules.number %}
+                <li class="page-item active"><span class="page-link">{{ num }}</span></li>
+                {% else %}
+                <li class="page-item"><a class="page-link" href="?page={{ num }}">{{ num }}</a></li>
+                {% endif %}
+                {% endfor %}
+
+                {% if test_schedules.has_next %}
+                <li class="page-item"><a class="page-link"
+                        href="?page={{ test_schedules.next_page_number }}">&raquo;</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% else %}
+    <div class="alert alert-warning text-center w-100">
+        No schedules found for "{{ query }}".
+    </div>
+    {% endif %}
+</section>
+
+
+
+<div class="modal fade" id="scheduleDetailModal" tabindex="-1" aria-labelledby="scheduleDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header bg-primary text-white fw-semibold">
+                <h5 class="modal-title fw-bold" id="scheduleDetailModalLabel">Schedule Details</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="w-100">
+                    <div class="ratio ratio-21x9 mb-3">
+                        <img id="schedule-image" src="" alt="Schedule Image" class="w-100 h-100 rounded border"
+                            style="object-fit: cover;">
+                    </div>
+                    <div class="px-2 d-flex flex-column">
+                        <h4 id="schedule-name" class="fs-4 fw-semibold"></h4>
+                        <div class="row px-2">
+                            <div class="col-6 px-1">
+                                <p class="fw-semibold mb-2"> By <span id="schedule-psychologist"
+                                        class="text-primary"></span></p>
+                            </div>
+                            <div class="col-6 px-1 text-end">
+                                <p id="schedule-capacity" class="mb-2"></p>
+                            </div>
+                        </div>
+                        <p id="schedule-description" class="border-bottom mb-2 pb-2 text-justify"></p>
+                        <div class="row px-2">
+                            <div class="col-6 px-1">
+                                <p class="m-0">
+                                    <span class="fw-semibold">Test Location:</span>
+                                    <span id="schedule-location"></span>
+                                </p>
+                            </div>
+                            <div class="col-6 px-1 text-end">
+                                <p id="schedule-date" class="m-0"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $('.card').on('click', function () {
+            const name = $(this).data('name');
+            const psychologist = $(this).data('psychologist-name');
+            const description = $(this).data('description');
+            const date = $(this).data('date-human');
+            const capacity = $(this).data('count') + '/' + $(this).data('capacity');
+            const location = $(this).data('location');
+            const image = $(this).data('image');
+
+            $('#schedule-name').text(name);
+            $('#schedule-psychologist').text(psychologist);
+            $('#schedule-description').text(description);
+            $('#schedule-date').text(date);
+            $('#schedule-capacity').text(capacity);
+            $('#schedule-location').text(location);
+            $('#schedule-image').attr('src', image);
+
+            $('#scheduleDetailModal').modal('show');
+        });
+
+        $('.btn-regis').on('click', function (e) {
+            e.stopPropagation();
+
+            Swal.fire({
+                title: 'You have to sign in first',
+                icon: 'info',
+                showCancelButton: true,
+                cancelButtonColor: '#6C757D',
+                confirmButtonColor: '#157347',
+                confirmButtonText: 'Ok'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = "{% url 'sign-in' %}";
+                }
+            });
+        });
+
+        $('.btn-notavailable').on('click', function (e) {
+            e.stopPropagation();
+
+            Swal.fire({
+                icon: 'error',
+                title: 'Not Available!',
+                text: 'This schedule is full or not available anymore.',
+                confirmButtonText: 'Ok',
+                confirmButtonColor: '#dc3545',
+            });
+        });
+
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,139 @@
+<nav id="navbar" class="navbar navbar-expand-lg navbar-dark py-2 fixed-top m-0 shadow-sm shadow-primary border-bottom border-secondary">
+    <div class="container">
+        <a class="navbar-brand fw-semibold text-primary" href="{% url 'home' %}">
+            <span class="me-2">
+                <img src="static/images/LogoPrimary.png" alt="Logo XXX" width="50px">
+            </span>
+            MindSphere
+        </a>
+
+        <button id="openSideBar" class="navbar-toggler text-primary" type="button">
+            <span class="fs-"><i class="fas fa-bars"></i></span>  
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ms-auto me-3 gap-2">
+                <li class="nav-item">
+                    <a class="nav-link fw-semibold {% if section == 'home' %} active {% endif %}" href="{% url 'home' %}">
+                        <i class="fas fa-home me-1"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-semibold {% if section == 'schedule-list' %} active {% endif %}" href="{% url 'schedule-list' %}">
+                        <i class="fas fa-clipboard-list me-1"></i> Schedule
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-semibold {% if section == 'about' %} active {% endif %}" href="{% url 'about' %}">
+                        <i class="fas fa-info-circle me-1"></i> About
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-semibold {% if section == 'contact' %} active {% endif %}" href="{% url 'contact' %}">
+                        <i class="fas fa-phone me-1"></i> Contact
+                    </a>
+                </li>
+            </ul>          
+            
+            <ul class="navbar-nav ms-auto me-3 gap-2">          
+                {% if user.id %}
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold" href="{% url 'sign-out' %}">
+                            Sign Out <i class="fa-solid fa-arrow-right-from-bracket ms-2"></i>
+                        </a>
+                    </li>
+                {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold {% if section == 'sign-in' %}active{% endif %}" href="{% url 'sign-in' %}">
+                            Sign In<i class="fas fa-arrow-right-to-bracket ms-2"></i>
+                        </a>
+                    </li>
+                {% endif %}
+            </ul>          
+        </div>
+    </div>
+</nav>
+
+<!-- Sidebar -->
+<nav id="sidebar" class="navbar bg-primary position-fixed navbar-dark fixed-start shadow-lg vh-100 d-flex flex-column align-items-start py-3">
+    <div class="container-fluid flex-column d-flex justify-content-between h-100">
+        <div class="w-100 d-flex flex-column">
+            <div class="text-white w-100 border-bottom border-white d-flex justify-content-between" style="padding-bottom: 5.5px;">
+                <a class="navbar-brand fw-semibold" href="{% url 'home' %}">
+                    <img src="static/images/LogoLight.png" alt="Logo XXX" width="50px" class="me-2">
+                    MindSphere
+                </a>
+                <button id="closeSideBar" class="navbar-toggler text-white border-0" type="button">
+                    <span class="fs-1"><i class="fas fa-xmark"></i></span>
+                </button>
+            </div>
+            <ul class="navbar-nav d-flex flex-column gap-3 mt-3 w-100 px-3">
+                <li class="nav-item">
+                    <a class="nav-link fw-semibold {% if section == 'home' %}active{% endif %}" href="{% url 'home' %}">
+                        <i class="fas fa-home me-1"></i> Home
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-semibold {% if section == 'schedule-list' %}active{% endif %}" href="{% url 'schedule-list' %}">
+                        <i class="fas fa-clipboard-list me-1"></i> Schedule
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-semibold {% if section == 'about' %}active{% endif %}" href="{% url 'about' %}">
+                        <i class="fas fa-info-circle me-1"></i> About
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link fw-semibold {% if section == 'contact' %}active{% endif %}" href="{% url 'contact' %}">
+                        <i class="fas fa-phone me-1"></i> Contact
+                    </a>
+                </li>
+            </ul>
+        </div>
+
+        <ul class="navbar-nav d-flex flex-column w-100 border-top boder-light pt-2 px-3">
+            {% if request.session.user_id %}
+                <li class="nav-item">
+                    <a class="nav-link fw-semibold" href="#">
+                        Sign Out <i class="fa-solid fa-arrow-right-from-bracket ms-2"></i>
+                    </a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link fw-semibold {% if section == 'sign-in' %}active{% endif %}" href="{% url 'sign-in' %}">
+                        Sign In <i class="fas fa-arrow-right-to-bracket ms-2"></i>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </div>
+</nav>
+
+<div id="overlay" class="overlay d-none"></div>
+
+<script>
+    const sidebar = document.getElementById('sidebar');
+    const overlay = document.getElementById('overlay');
+
+    document.getElementById('openSideBar').addEventListener('click', function() {
+        sidebar.classList.add('show');
+        overlay.classList.remove('d-none');
+    });
+
+    document.getElementById('closeSideBar').addEventListener('click', function() {
+        sidebar.classList.remove('show');
+        overlay.classList.add('d-none');
+    });
+
+    overlay.addEventListener('click', function() {
+        sidebar.classList.remove('show');
+        overlay.classList.add('d-none');
+    });
+
+    window.onresize = function() {
+        if (window.innerWidth > 768) {
+            sidebar.classList.remove('show');
+            overlay.classList.add('d-none');
+        }
+    };
+</script>

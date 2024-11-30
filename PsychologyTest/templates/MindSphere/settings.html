@@ -1,0 +1,277 @@
+{% extends "MindSphere/base.html" %}
+
+{% block title %}
+Account Settings - Mindsphere
+{% endblock %}
+
+{% block content %}
+
+<section class="w-100 px-4" style="margin-top: 30px;">
+    <h2 class="fw-bold text-center mb-4">Your Account <span class="text-primary">Settings</span></h2>
+
+    <div class="row">
+        <div class="col-md-6 px-4 py-4">
+            <h3 class="mb-4 fw-bold text-primary border-bottom border-2 border-primary lh-base"> Profile Setting </h3>
+            <form id="form-profile" method="POST" autocomplete="off" class="">
+                {% csrf_token %}
+                
+                <!-- Username Field -->
+                <div class="w-100">
+                    <div class="text-danger d-none text-end w-100 fs-small ps-1 mb-1" id="username_error"></div>
+                    <div class="form-group w-100 position-relative">
+                        <input type="text" class="form-control pe-5 fs-6" id="username" name="username" required placeholder=" " maxlength="150" value="{{ account.username|default_if_none:'' }}"/>
+                        <label for="username" class="form-label fs-6 bg-white px-1">Username</label>
+                        <label for="username" class="position-absolute top-50 translate-middle" style="right: 3px"><i class="text-primary fas fa-user"></i></label>
+                    </div>
+                </div>
+
+                <div class="w-100 mt-4">
+                    <div class="text-danger d-none text-end w-100 fs-small ps-1 mb-1" id="email_error"></div>
+                    <div class="form-group w-100 position-relative">
+                        <input type="email" class="form-control pe-5 fs-6" id="email" name="email" required placeholder=" " maxlength="150" value="{{ account.email|default_if_none:'' }}"/>
+                        <label for="email" class="form-label fs-6 bg-white px-1">Email</label>
+                        <label for="email" class="position-absolute top-50 translate-middle" style="right: 1px"><i class="text-primary fas fa-envelope"></i></label>
+                    </div>
+                </div>
+            
+                <!-- First Name Field -->
+                <div class="w-100 mt-4">
+                    <div class="text-danger d-none text-end w-100 fs-small ps-1 mb-1" id="first_name_error"></div>
+                    <div class="form-group w-100 position-relative">
+                        <input type="text" class="form-control pe-5 fs-6" id="first_name" name="first_name" required placeholder=" " maxlength="150" value="{{ account.first_name|default_if_none:'' }}"/>
+                        <label for="first_name" class="form-label fs-6 bg-white px-1">First Name</label>
+                        <label for="first_name" class="position-absolute top-50 translate-middle" style="right: 3px"><i class="text-primary fas fa-user"></i></label>
+                    </div>
+                </div>
+            
+                <!-- Last Name Field -->
+                <div class="w-100 mt-4">
+                    <div class="text-danger d-none text-end w-100 fs-small ps-1 mb-1" id="last_name_error"></div>
+                    <div class="form-group w-100 position-relative">
+                        <input type="text" class="form-control pe-5 fs-6" id="last_name" name="last_name" required placeholder=" " maxlength="150" value="{{ account.last_name|default_if_none:'' }}"/>
+                        <label for="last_name" class="form-label fs-6 bg-white px-1">Last Name</label>
+                        <label for="last_name" class="position-absolute top-50 translate-middle" style="right: 3px"><i class="text-primary fas fa-user"></i></label>
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-2 w-25 mt-3">
+                    <button type="submit" class="btn btn-success w-100 mx-auto fs-small fw-bold">Save</button>
+                    <button class="btn btn-secondary w-100 mx-auto fs-small fw-bold btn-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="col-md-6 px-4 py-4">
+            <h3 class="mb-4 fw-bold text-primary border-bottom border-2 border-primary lh-base"> Change Password </h3>
+            <form id="form-password" method="POST" autocomplete="off" class="">
+                {% csrf_token %}
+                
+                <!-- Password Field -->
+                <div class="w-100">
+                    <div class="text-danger d-none text-end w-100 fs-small ps-1 mb-1" id="old_password_error"></div>
+                    <div class="form-group w-100 position-relative">
+                        <input type="password" class="form-control pe-5 fs-6" id="old_password" name="old_password" required placeholder=" " maxlength="150"/>
+                        <label for="old_password" class="form-label fs-6 bg-white px-1">Old Password</label>
+                        <label for="old_password" class="position-absolute top-50 translate-middle" style="right: 0px"><i id="toggle-old-password" class="text-primary fas fa-eye"></i></label>
+                    </div>
+                </div>
+                <!-- Password Field -->
+                <div class="w-100 mt-3">
+                    <div class="text-danger d-none text-end w-100 fs-small ps-1 mb-1" id="password_error"></div>
+                    <div class="form-group w-100 position-relative">
+                        <input type="password" class="form-control pe-5 fs-6" id="password" name="password" required placeholder=" " maxlength="150"/>
+                        <label for="password" class="form-label fs-6 bg-white px-1">New Password</label>
+                        <label for="password" class="position-absolute top-50 translate-middle" style="right: 0px"><i id="toggle-password" class="text-primary fas fa-eye"></i></label>
+                    </div>
+                </div>
+            
+                <!-- Confirm Password Field -->
+                <div class="w-100 mt-3">
+                    <div class="text-danger d-none text-end w-100 fs-small ps-1 mb-1" id="confirm_password_error"></div>
+                    <div class="form-group w-100 position-relative">
+                        <input type="password" class="form-control pe-5 fs-6" id="confirm_password" name="confirm_password" required placeholder=" " maxlength="150"/>
+                        <label for="confirm_password" class="form-label fs-6 bg-white px-1">Confirm Password</label>
+                        <label for="confirm_password" class="position-absolute top-50 translate-middle" style="right: 0px"><i id="toggle-confirm-password" class="text-primary fas fa-eye"></i></label>
+                    </div>
+                </div>
+                
+                <div class="d-flex gap-2 w-25 mt-3">
+                    <button type="submit" class="btn btn-success w-100 mx-auto fs-small fw-bold">Save</button>
+                    <button class="btn btn-secondary w-100 mx-auto fs-small fw-bold btn-cancel">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+{% include 'loading-spinner.html' %}
+
+<script>
+    $(document).ready(function(){
+        function SuccessPopUp(message){
+            Swal.fire({
+                icon: 'success',
+                title: 'Successfully!',
+                text: message,
+                confirmButtonText: 'Ok',
+                confirmButtonColor: '#0EA5E9',
+            }).then(() => {
+                location.reload();
+            });
+        }
+
+        function ErrorPopUp(message){
+            Swal.fire({
+                icon: 'error',
+                title: 'Failed!',
+                text: message,
+                confirmButtonText: 'Ok',
+                confirmButtonColor: '#dc3545',
+            });
+        }
+
+        function resetErrors(formSelector) {
+            $(`${formSelector} .text-danger`).each(function () {
+                $(this).text("");
+                $(this).addClass("d-none");
+            });
+        }
+
+        function onLoading() {
+            $('#loading').removeClass('d-none');
+            $('.overlay').removeClass('d-none');
+        }
+
+        function onLoaded() {
+            $('#loading').addClass('d-none');
+            $('.overlay').addClass('d-none');
+        }
+
+        const passwordInputOld = $('#old_password');
+        const passwordInput = $('#password');
+        const passwordInput2 = $('#confirm_password');
+        const toggleIconOld = $('#toggle-old-password');
+        const toggleIcon = $('#toggle-password');
+        const toggleIcon2 = $('#toggle-confirm-password');
+        toggleIcon.on('click', function() {
+            if (passwordInput.attr('type') === 'password') {
+                passwordInput.attr('type', 'text');
+                toggleIcon.removeClass('fa-eye').addClass('fa-eye-slash');
+            } else {
+                passwordInput.attr('type', 'password');
+                toggleIcon.removeClass('fa-eye-slash').addClass('fa-eye');
+            }
+        });
+        toggleIcon2.on('click', function() {
+            if (passwordInput2.attr('type') === 'password') {
+                passwordInput2.attr('type', 'text');
+                toggleIcon2.removeClass('fa-eye').addClass('fa-eye-slash');
+            } else {
+                passwordInput2.attr('type', 'password');
+                toggleIcon2.removeClass('fa-eye-slash').addClass('fa-eye');
+            }
+        });
+        toggleIconOld.on('click', function() {
+            if (passwordInputOld.attr('type') === 'password') {
+                passwordInputOld.attr('type', 'text');
+                toggleIconOld.removeClass('fa-eye').addClass('fa-eye-slash');
+            } else {
+                passwordInputOld.attr('type', 'password');
+                toggleIconOld.removeClass('fa-eye-slash').addClass('fa-eye');
+            }
+        });
+
+        $('.btn-cancel').on('click', function(e){
+            e.preventDefault();
+            location.reload();
+        });
+
+        $('#form-profile').on('submit', function(e) {
+            e.preventDefault();
+            resetErrors();
+            onLoading();
+            
+            const formData = new FormData(this);
+        
+            $.ajax({
+                url: '{% url "change-profile" %}',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    onLoaded();
+                    if (response.status === 'success') {
+                        SuccessPopUp(response.message);
+                    } else {
+                        ErrorPopUp(response.message);
+                        if (response.errors) {
+                            for (const field in response.errors) {
+                                const errorField = $('#'+field+'_error');
+                                errorField.removeClass('d-none').text('*'+response.errors[field]);
+                            }
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    onLoaded();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Failed!',
+                        text: message,
+                        confirmButtonText: 'Ok',
+                        confirmButtonColor: '#dc3545',
+                    });
+                }
+            });
+        });
+
+        $('#form-password').on('submit', function(e) {
+            e.preventDefault();
+            resetErrors();
+            onLoading();
+            
+            const formData = new FormData(this);
+        
+            $.ajax({
+                url: '{% url "change-password" %}',
+                type: 'POST',
+                data: formData,
+                processData: false,
+                contentType: false,
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}'
+                },
+                success: function(response) {
+                    onLoaded();
+                    if (response.status === 'success') {
+                        SuccessPopUp(response.message);
+                    } else {
+                        ErrorPopUp(response.message);
+                        if (response.errors) {
+                            for (const field in response.errors) {
+                                const errorField = $('#'+field+'_error');
+                                errorField.removeClass('d-none').text('*'+response.errors[field]);
+                            }
+                        }
+                    }
+                },
+                error: function(xhr, status, error) {
+                    onLoaded();
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Failed!',
+                        text: message,
+                        confirmButtonText: 'Ok',
+                        confirmButtonColor: '#dc3545',
+                    });
+                }
+            });
+        });
+    });
+</script>
+
+{% endblock %}

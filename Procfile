@@ -1,0 +1,1 @@
+web: gunicorn MindSphere.wsgi
